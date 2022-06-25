@@ -32,13 +32,13 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 
 const googleProvider = new GoogleAuthProvider()
+
 googleProvider.setCustomParameters({
   prompt: 'select_account',
 })
 
 export const auth = getAuth()
 export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
-
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, googleProvider)
 
@@ -46,7 +46,8 @@ export const db = getFirestore()
 
 export const addCollectionAndDocuments = async (
   collectionKey,
-  objectsToAdd
+  objectsToAdd,
+  field
 ) => {
   const collectionRef = collection(db, collectionKey)
   const batch = writeBatch(db)
@@ -70,7 +71,7 @@ export const getCategoriesAndDocuments = async () => {
 
 export const createUserDocumentFromAuth = async (
   userAuth,
-  additionalInfo = {}
+  additionalInformation = {}
 ) => {
   if (!userAuth) return
 
@@ -87,14 +88,14 @@ export const createUserDocumentFromAuth = async (
         displayName,
         email,
         createdAt,
-        ...additionalInfo,
+        ...additionalInformation,
       })
     } catch (error) {
       console.log('error creating the user', error.message)
     }
   }
 
-  return userDocRef
+  return userSnapshot
 }
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
@@ -109,7 +110,20 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password)
 }
 
-export const signOutUser = async () => signOut(auth)
+export const signOutUser = async () => await signOut(auth)
 
 export const onAuthStateChangedListener = callback =>
   onAuthStateChanged(auth, callback)
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      userAuth => {
+        unsubscribe()
+        resolve(userAuth)
+      },
+      reject
+    )
+  })
+}

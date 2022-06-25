@@ -1,6 +1,6 @@
-import DirectoryItem from '../directory-item/directory-item.component'
+import DirectoryItem from '../directory-item/directory-item.component';
 
-import { DirectoryContainer } from './directory.styles'
+import { DirectoryContainer } from './directory.styles';
 
 const categories = [
   {
@@ -33,16 +33,16 @@ const categories = [
     imageUrl: 'https://i.ibb.co/R70vBrQ/men.png',
     route: 'shop/mens',
   },
-]
+];
 
 const Directory = () => {
   return (
     <DirectoryContainer>
-      {categories.map(category => (
+      {categories.map((category) => (
         <DirectoryItem key={category.id} category={category} />
       ))}
     </DirectoryContainer>
-  )
-}
+  );
+};
 
-export default Directory
+export default Directory;
